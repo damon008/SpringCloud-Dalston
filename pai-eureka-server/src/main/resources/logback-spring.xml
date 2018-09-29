@@ -5,7 +5,7 @@
     <logger name="com.leinao" level="INFO"/>
 
 
-    <!-- 测试环境+开发环境. 多个使用逗号隔开. -->
+    <!--开发环境. 多个使用逗号隔开. -->
     <springProfile name="dev">
         <logger name="org.springframework.web" level="${logging.level.org.springframework.web}"/>
         <logger name="com.leinao" level="${logging.level.com.leinao}"/>
@@ -16,7 +16,7 @@
         </root>
     </springProfile>
 
-    <!-- 生产环境. java -jar xxx.jar - -spring.profiles.active=prod -->
+    <!-- 测试+生产环境. java -jar xxx.jar - -spring.profiles.active=prod -->
     <springProfile name="staging,prod">
         <logger name="org.springframework.web" level="${logging.level.org.springframework.web}"/>
         <logger name="com.leinao" level="${logging.level.com.leinao}"/>
