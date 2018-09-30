@@ -9,9 +9,6 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import com.netflix.loadbalancer.IRule;
-import com.netflix.loadbalancer.RandomRule;
-
 /**
  * @author Mr.Null
  * @date 2018年2月2日 下午7:15:53
@@ -31,10 +28,5 @@ public class BeansConfig {
 		RestTemplate rt = new RestTemplate(requestFactory);
 		return rt;
 	}
-	
-	@Bean
-    public IRule ribbonRule() {
-        return new RandomRule();//这里配置策略，和配置文件对应
-    }
 
 }

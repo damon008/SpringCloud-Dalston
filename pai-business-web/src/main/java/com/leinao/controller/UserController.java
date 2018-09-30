@@ -31,7 +31,7 @@ public class UserController {
 	
 	@RequestMapping(value="/")
 	public String getInfo() {
-		return "" + content;
+		return content;
 	}
 	
 
