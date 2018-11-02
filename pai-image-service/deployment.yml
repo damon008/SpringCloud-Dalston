@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pai-image-service-deployment
+  labels:
+    app: pai-image-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pai-image-service
+  template:
+    metadata:
+      labels:
+        app: pai-image-service
+    spec:
+      nodeSelector:
+        pai-image-service: "true"
+      containers:
+        - name: pai-image-service
+          image: 10.11.3.8:5000/master/pai-image-service
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 2004
+              hostPort: 2004
+          volumeMounts:
+          - mountPath: /home/pai-image-service
+            name: pai-image-service-path
+          - mountPath: /data/pai-image-service
+            name: pai-image-service-log-path
+          args: ["sh", "-c", "nohup java $JAVA_OPTS -jar pai-image-service.jar --spring.profiles.active=prod --spring.cloud.config.profile=prod", "&"]
+      volumes:
+      - name: pai-image-service-path
+        hostPath:
+          path: /var/pai/pai-image-service
+      - name: pai-image-service-log-path
+        hostPath:
+          path: /data/pai-image-service

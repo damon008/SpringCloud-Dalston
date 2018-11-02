@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.leinao.file.dao.BaseInfoMapper">
+	<select id="getTaskNumOfCategory" resultType="java.util.HashMap">
+		select (running_count+waiting_count) as value,category as name from base_task_basic_info group by category
+	</select>
+
+	<select id="getGPUNumOfCategory" resultType="java.util.HashMap">
+		select category,num as number from base_gpu_basic_info group by category
+	</select>
+	
+	<select id="getActiveUserNumber" resultType="int">
+		select count as value from base_user_basic_info where flag='1'
+	</select>
+
+	<select id="getNotActiveUserNumber" resultType="int">
+		select count as value from base_user_basic_info where flag='0'
+	</select>
+
+	<select id="getWaitingTaskNumber" resultType="int">
+		select sum(waiting_count) as value from base_task_basic_info
+	</select>
+
+	<select id="getRunningTaskNumber" resultType="int">
+		select sum(running_count) as value from base_task_basic_info
+	</select>
+	
+	<select id="getDataResourceInfo" resultType="java.util.HashMap">
+		select name,count as value from base_data_resource_basic_info
+	</select>
+
+	<select id="getNetworkLoad" resultType="java.util.HashMap">
+		select node_name as name,state as value from base_network_load
+	</select>
+	
+	<select id="getResourceUtilizationRatio" resultType="java.util.HashMap">
+		select time,ratio from base_resource_utilization_ratio order by time
+	</select>
+
+	<select id="getFailureTime" resultType="java.sql.Timestamp">
+		select failure_time from ai_user_basic_info where token = #{token}
+	</select>
+
+	<select id="getUserId" resultType="String">
+		select id from ai_user_basic_info where token = #{token}
+	</select>
+
+	<update id="updateFailureTime" parameterType="java.util.Map">
+		update ai_user_basic_info set failure_time = #{failureTime} where token = #{token}
+	</update>
+</mapper>

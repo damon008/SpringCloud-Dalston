@@ -68,7 +68,7 @@
 	</dependencies>
 	
 	<build>
-		<finalName>eureka-server</finalName>
+		<finalName>pai-eureka-server</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

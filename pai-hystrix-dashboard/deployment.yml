@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pai-hystrix-dashboard-deployment
+  labels:
+    app: pai-hystrix-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pai-hystrix-dashboard
+  template:
+    metadata:
+      labels:
+        app: pai-hystrix-dashboard
+    spec:
+      nodeSelector:
+        pai-hystrix-dashboard: "true"
+      containers:
+        - name: pai-hystrix-dashboard
+          image: 10.11.3.8:5000/master/pai-hystrix-dashboard
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 1301
+              hostPort: 1301
+          volumeMounts:
+          - mountPath: /home/pai-hystrix-dashboard
+            name: pai-hystrix-dashboard-path
+          - mountPath: /data/pai-hystrix-dashboard
+            name: pai-hystrix-dashboard-log-path
+          args: ["sh", "-c", "nohup java $JAVA_OPTS -jar pai-hystrix-dashboard.jar --spring.profiles.active=prod ", "&"]
+      volumes:
+      - name: pai-hystrix-dashboard-path
+        hostPath:
+          path: /var/pai/pai-hystrix-dashboard
+      - name: pai-hystrix-dashboard-log-path
+        hostPath:
+          path: /data/pai-hystrix-dashboard

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pai-api-gateway-deployment
+  labels:
+    app: pai-api-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pai-api-gateway
+  template:
+    metadata:
+      labels:
+        app: pai-api-gateway
+    spec:
+      nodeSelector:
+        pai-api-gateway: "true"
+      containers:
+        - name: pai-api-gateway
+          image: 10.11.3.8:5000/master/pai-api-gateway
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5555
+              hostPort: 5555
+          volumeMounts:
+          - mountPath: /home/pai-api-gateway
+            name: pai-api-gateway-path
+          - mountPath: /data/pai-api-gateway
+            name: pai-api-gateway-log-path
+          args: ["sh", "-c", "nohup java $JAVA_OPTS -jar pai-api-gateway.jar --spring.profiles.active=prod ", "&"]
+      volumes:
+      - name: pai-api-gateway-path
+        hostPath:
+          path: /var/pai/pai-api-gateway
+      - name: pai-api-gateway-log-path
+        hostPath:
+          path: /data/pai-api-gateway

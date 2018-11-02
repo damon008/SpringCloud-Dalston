@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pai-file-center-deployment
+  labels:
+    app: pai-file-center
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: pai-file-center
+  template:
+    metadata:
+      labels:
+        app: pai-file-center
+    spec:
+      nodeSelector:
+        pai-file-center: "true"
+      containers:
+        - name: pai-file-center1
+          image: 10.11.3.8:5000/master/pai-file-center
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 2002
+              hostPort: 2002
+          volumeMounts:
+          - mountPath: /home/pai-file-center
+            name: pai-file-center-path
+          - mountPath: /data/pai-file-center
+            name: pai-file-center-log-path1
+          args: ["sh", "-c", "nohup java $JAVA_OPTS -jar pai-file-center.jar --eureka.client.serviceUrl.defaultZone=http://10.12.3.2:1111/eureka/,http://10.12.3.2:1112/eureka/ --spring.profiles.active=prod --spring.cloud.config.profile=prod", "&"]
+        - name: pai-file-center2
+          image: 10.11.3.8:5000/master/pai-file-center
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 2003
+              hostPort: 2003
+          volumeMounts:
+          - mountPath: /home/pai-file-center
+            name: pai-file-center-path
+          - mountPath: /data/pai-file-center
+            name: pai-file-center-log-path2
+          args: ["sh", "-c", "nohup java $JAVA_OPTS -jar pai-file-center.jar --eureka.client.serviceUrl.defaultZone=http://10.12.3.2:1111/eureka/,http://10.12.3.2:1112/eureka/ --spring.profiles.active=prod --spring.cloud.config.profile=prod", "&"]
+      volumes:
+      - name: pai-file-center-path
+        hostPath:
+          path: /var/pai/pai-file-center
+      - name: pai-file-center-log-path1
+        hostPath:
+          path: /data/pai-file-center1
+      - name: pai-file-center-log-path2
+        hostPath:
+          path: /data/pai-file-center2

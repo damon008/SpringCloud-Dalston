@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pai-business-web-deployment
+  labels:
+    app: pai-business-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pai-business-web
+  template:
+    metadata:
+      labels:
+        app: pai-business-web
+    spec:
+      nodeSelector:
+        pai-business-web: "true"
+      containers:
+        - name: pai-business-web
+          image: 10.11.3.8:5000/master/pai-business-web
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 31003
+              hostPort: 31003
+          volumeMounts:
+          - mountPath: /home/pai-business-web
+            name: pai-business-web-path
+          - mountPath: /data/pai-business-web
+            name: pai-business-web-log-path
+          args: ["sh", "-c", "nohup java $JAVA_OPTS -jar pai-business-web.jar --spring.profiles.active=prod ", "&"]
+      volumes:
+      - name: pai-business-web-path
+        hostPath:
+          path: /var/pai/pai-business-web
+      - name: pai-business-web-log-path
+        hostPath:
+          path: /data/pai-business-web

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.leinao.file.dao.FileMapper">
+    <insert id="insertUserJobBandwidth" parameterType="java.util.Map">
+        insert into pai_user_job_bandwidth (user_id, job_name, task_role_name,
+        task_index, band_width, create_time, update_time)
+        values (#{userId}, 'file_center_upload', 'file_center_upload_role',
+        '0',#{bandWidth}, now(), now())
+        <selectKey resultType="java.lang.Long" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <insert id="insertUserDownBandWidth" parameterType="java.util.Map">
+        insert into pai_user_job_bandwidth (user_id, job_name, task_role_name,
+        task_index, band_width, create_time, update_time)
+        values (#{userId}, 'file_center_down', 'file_center_down_role',
+        '0', #{bandWidth}, now(), now())
+        <selectKey resultType="java.lang.Long" keyProperty="id">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+
+    <!--获取用户创建文件的父id -->
+	<select id="getParentId" resultType="java.lang.Long">
+		select id from big_screen_user_file where  path = #{path}
+	</select>
+    
+    <!--新建或者上传文件插入数据到表里 -->
+	<insert id="insertBigScreenUserFile" parameterType="java.util.Map">
+      insert into big_screen_user_file 
+      (parent_id, path, file_type, user_id,file_size,create_date, update_date)
+      values 
+      (#{parentId},#{path},#{fileType},#{userId},#{fileSize},now(),now())
+      <selectKey resultType="java.lang.Long" keyProperty="id">
+		SELECT LAST_INSERT_ID()
+	  </selectKey>
+	</insert>
+
+    <!--根据path和user_id查询文件在表里的id -->
+    <select id="getFileId" resultType="java.lang.Long">
+		select id from big_screen_user_file where path = #{path} and user_id = #{userId}
+	</select>
+	
+	<!--更新已有文件的时间 -->
+	<update id="updateFileTime" parameterType="java.util.Map">
+		update big_screen_user_file set update_date = now()  where path = #{path} and user_id = #{userId}
+	</update>
+    
+    <!-- 根据字段path	删除文件表里的记录 -->
+	<delete id="deleteFolderFile">
+       delete from big_screen_user_file
+       where path = #{path}
+    </delete>
+    
+    <!--重命名的时候查询表里需要同步重命名的所有记录的路径名-->
+     <select id="queryPathByRenameFiles" resultType="string">
+		select path from big_screen_user_file where path like concat(#{dirPath}, '%')
+		union
+		select path from big_screen_user_file where path = #{dir}
+	</select> 
+    
+    <!--根据字段path更新字段  -->
+	<update id="updateRenameFile">
+		update big_screen_user_file set path = #{reName}  where path = #{file}
+	</update>
+	
+    <!--根据path查询记录的相关字段 -->
+	<select id="getOldFile" resultType="com.leinao.file.model.BigScreenUserFile">
+        select parent_id parentId,file_type fileType,user_id userId,file_size fileSize
+        from big_screen_user_file where path = #{oldFile}
+    </select>
+
+    <!--查询要复制文件下的所有文件字段 -->
+    <select id="selectCopySunFiles" resultType="com.leinao.file.model.BigScreenUserFile">
+        select id id,path path,parent_id parentId,file_type fileType,user_id userId,file_size fileSize
+        from big_screen_user_file where path like concat(#{path}, '%')
+        union
+        select id id,path path,parent_id parentId,file_type fileType,user_id userId,file_size fileSize
+        from big_screen_user_file where path = #{dir}
+    </select>
+
+</mapper>

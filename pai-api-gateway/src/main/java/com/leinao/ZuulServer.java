@@ -6,6 +6,8 @@ import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 
 /**
 *
+*实现服务端负载均衡
+*
 *@author wangshoufa
 *@date 2017年3月18日 下午6:31:08
 *@SpringcloudApplication 等同于@SpringBootApplication、@EnableDiscoveryClient、@EnableCircuitBreaker

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pai-dataset-service-deployment
+  labels:
+    app: pai-dataset-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pai-dataset-service
+  template:
+    metadata:
+      labels:
+        app: pai-dataset-service
+    spec:
+      nodeSelector:
+        pai-dataset-service: "true"
+      containers:
+        - name: pai-dataset-service
+          image: 10.11.3.8:5000/master/pai-dataset-service
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 2003
+              hostPort: 2003
+          volumeMounts:
+          - mountPath: /home/pai-dataset-service
+            name: pai-dataset-service-path
+          - mountPath: /data/pai-dataset-service
+            name: pai-dataset-service-log-path
+          args: ["sh", "-c", "nohup java $JAVA_OPTS -jar pai-dataset-service.jar --spring.profiles.active=prod --spring.cloud.config.profile=prod", "&"]
+      volumes:
+      - name: pai-dataset-service-path
+        hostPath:
+          path: /var/pai/pai-dataset-service
+      - name: pai-dataset-service-log-path
+        hostPath:
+          path: /data/pai-dataset-service

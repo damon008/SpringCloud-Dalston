@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pai-service-web-deployment
+  labels:
+    app: pai-service-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pai-service-web
+  template:
+    metadata:
+      labels:
+        app: pai-service-web
+    spec:
+      nodeSelector:
+        pai-service-web: "true"
+      containers:
+        - name: pai-service-web
+          image: 10.11.3.8:5000/master/pai-service-web
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 31004
+              hostPort: 31004
+          volumeMounts:
+          - mountPath: /home/pai-service-web
+            name: pai-service-web-path
+          - mountPath: /data/pai-service-web
+            name: pai-service-web-log-path
+          args: ["sh", "-c", "nohup java $JAVA_OPTS -jar pai-service-web.jar --spring.profiles.active=prod", "&"]
+      volumes:
+      - name: pai-service-web-path
+        hostPath:
+          path: /var/pai/pai-service-web
+      - name: pai-service-web-log-path
+        hostPath:
+          path: /data/pai-service-web

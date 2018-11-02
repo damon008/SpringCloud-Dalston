@@ -47,6 +47,12 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-zuul</artifactId>
 		</dependency>
+		<!-- Zuul重试请求机制 -->
+		<dependency>
+			<groupId>org.springframework.retry</groupId>
+			<artifactId>spring-retry</artifactId>
+		</dependency>
+		
 		<!-- eureka客户端 -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -72,7 +78,7 @@
 	
 	
 	<build>
-		<finalName>api-gateway</finalName>
+		<finalName>pai-api-gateway</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

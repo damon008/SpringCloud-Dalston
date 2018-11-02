@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>文件夹上传</title>
+</head>
+<body>
+<form action="/file/upload" method="post" enctype="multipart/form-data">
+    <!-- html5支持选择文件夹上传 -->
+    <input type="file" name="file" multiple webkitdirectory><br/>
+    <input type="text" name="token" value="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Il9kYzBlY2E5NGFlODE0MTAyOTlkZDVmNjdmYjE1MzhhNiIsImFkbWluIjpmYWxzZSwiaWF0IjoxNTM5NjE1NDM2LCJleHAiOjE1Mzk2MjI2MzZ9.JJRqyD2cP8OyYFPDMaJv86LosjvzaxmN7Vy4LNjNfxY"><br/>
+    <input type="text" name="dir" value="/ghome/_dc0eca94ae81410299dd5f67fb1538a6/123"><br/>
+    <button type="submit">上传</button>
+</form>
+</body>
+</html>

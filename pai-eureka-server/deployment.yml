@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pai-eureka-server-deployment
+  labels:
+    app: pai-eureka-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pai-eureka-server
+  template:
+    metadata:
+      labels:
+        app: pai-eureka-server
+    spec:
+      nodeSelector:
+        pai-eureka-server: "true"
+      containers:
+        - name: pai-eureka-server1
+          image: 10.11.3.8:5000/master/pai-eureka-server
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 1111
+              hostPort: 1111
+          volumeMounts:
+          - mountPath: /home/pai-eureka-server
+            name: pai-eureka-server-path
+          - mountPath: /data/pai-eureka-server
+            name: pai-eureka-server-log-path1
+          args: ["sh", "-c", "nohup java $JAVA_OPTS -jar pai-eureka-server.jar --spring.profiles.active=peer1 $PROPERTIES_OPTS1 $PROPERTIES_OPTS2 > /home/log-`date +%Y%m%d` ", "&"]
+        - name: pai-eureka-server2
+          image: 10.11.3.8:5000/master/pai-eureka-server
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 1112
+              hostPort: 1112
+          volumeMounts:
+          - mountPath: /home/pai-eureka-server
+            name: pai-eureka-server-path
+          - mountPath: /data/pai-eureka-server
+            name: pai-eureka-server-log-path2
+          args: ["sh", "-c", "nohup java $JAVA_OPTS -jar pai-eureka-server.jar --spring.profiles.active=peer2 $PROPERTIES_OPTS1 $PROPERTIES_OPTS2 > /home/log-`date +%Y%m%d` ", "&"]
+      volumes:
+      - name: pai-eureka-server-path
+        hostPath:
+          path: /var/pai/pai-eureka-server
+      - name: pai-eureka-server-log-path1
+        hostPath:
+          path: /data/pai-eureka-server1
+      - name: pai-eureka-server-log-path2
+        hostPath:
+          path: /data/pai-eureka-server2

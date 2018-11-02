@@ -1,13 +1,14 @@
 package com.leinao.filter;
 
-import com.netflix.zuul.ZuulFilter;
-import com.netflix.zuul.context.RequestContext;
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
+import com.netflix.zuul.ZuulFilter;
+import com.netflix.zuul.context.RequestContext;
 
 /**
  * 
@@ -24,25 +25,36 @@ import javax.servlet.http.HttpServletRequest;
  *@date 2017年3月18日 下午7:56:26
  *
  */
-
+@Component
 public class AccessFilter extends ZuulFilter {
 	private static Logger log = LoggerFactory.getLogger(AccessFilter.class);
 	
 	@Value("${pai.zuul.accessToken}")
 	private String webAccessToken;
 	
+	/*
+	* 定义过滤器类型，决定该规则处理请求的哪个生命周期执行，有以下四个阶段：
+	* pre: 在请求被路由之前执行
+	* routing : 在路由请求调用
+	* post : 在route和err之后被调用
+	* error：在处理请求发生错误时调用
+	*/
     @Override
     public String filterType() {
-        return "routing";
+        return "pre";
     }
     
+    /**
+    * 过滤器执行顺序,数字越小优先级越高
+    */
     @Override
     public int filterOrder() {
         return 0;
     }
     
+    @Override
     public boolean shouldFilter() {
-    	return true;
+    	return false;
     	/*return !RequestContext.getCurrentContext().getZuulResponseHeaders().isEmpty() ||
                 RequestContext.getCurrentContext().getResponseDataStream() != null ||
                 RequestContext.getCurrentContext().getResponseBody() != null;*/

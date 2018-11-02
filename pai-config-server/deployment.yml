@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pai-config-server-deployment
+  labels:
+    app: pai-config-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pai-config-server
+  template:
+    metadata:
+      labels:
+        app: pai-config-server
+    spec:
+      nodeSelector:
+        pai-config-server: "true"
+      containers:
+        - name: pai-config-server
+          image: 10.11.3.8:5000/master/pai-config-server
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8888
+              hostPort: 8888
+          volumeMounts:
+          - mountPath: /home/pai-config-server
+            name: pai-config-server-path
+          - mountPath: /data/pai-config-server
+            name: pai-config-server-log-path
+          - mountPath: /data/application-config
+            name: pai-config-server-file-path
+          args: ["sh", "-c", "nohup java $JAVA_OPTS -jar pai-config-server.jar --eureka.client.serviceUrl.defaultZone=http://10.12.3.2:1111/eureka/,http://10.12.3.2:1112/eureka/ --spring.cloud.config.server.native.searchLocations=file:/data/application-config", "&"]
+      volumes:
+      - name: pai-config-server-path
+        hostPath:
+          path: /var/pai/pai-config-server
+      - name: pai-config-server-log-path
+        hostPath:
+          path: /data/pai-config-server
+      - name: pai-config-server-file-path
+        hostPath:
+          path: /home/leinao/data/application-config
