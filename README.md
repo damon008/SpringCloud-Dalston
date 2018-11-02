@@ -19,4 +19,4 @@
 1. maven3+
 2. jdk8+
 3. docker
-4.k8s
+4. k8s
